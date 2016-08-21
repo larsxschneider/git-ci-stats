@@ -2,37 +2,45 @@
 <html>
 <head>
 	<meta charset="utf-8" />
-	<title>Travis CI build stats</title>
-	<link rel="stylesheet" href="style.css" />
+	<title>Git CI Stats</title>
+	<link href="style.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-	<h1>Travis CI build stats</h1>
-	<form>
-		<label>Repository:</label>
-		<input id="repo-name" type="text" placeholder="owner/repo" />
-		<input class="button" type="submit" value="Render" />
-	</form>
+	<h1>Git CI Stats</h1>
 
 	<div class="column">
-		<h2>Build durations (in minutes)</h2>
-		<h3>duration = sum of job run times</h3>
+		<h4>Pick the branch you want to look at</h4>
+		<form>
+			<input type="radio" name="branch" value="pu" checked> pu<br>
+			<input type="radio" name="branch" value="next" checked> next<br>
+			<input type="radio" name="branch" value="master"> master<br>
+			<input type="radio" name="branch" value="maint"> maint
+		</form>
+
+		<p>The bar represents the sum of the run times of all parallel jobs of
+		a build. A gray bar indicates a compile or an unknown error. A red bar
+		indicates a successful build but test case errors.</p>
+
+		<p>The last column indicates the failure reason. "no-log" means that
+		TravisCI generated nothing, "stalled" means the build just stopped for
+		an unknown reason, "compile" means that compilation failed, txxxx"
+		means that this test failed in at least one job of the build.</p>
+
+		<p>You can click on the Git hash to jump to the commit and you can
+		click on the bar to jump to the TravisCi build.</p>
 		<div id="build-times-duration"></div>
-	</div>
 
-	<div class="column">
-		<h2>Build wall times (in minutes)</h2>
-		<h3>wall time = finished_at - started_at</h3>
-		<div id="build-times"></div>
-	</div>
-
-	<div class="column">
-		<h2>Builds per day</h2>
-		<div id="build-counts"></div>
+		<p>
+			Thanks to <a href="http://scribu.net/about/">scribu</a> who created
+			<a href="http://scribu.net/blog/travis-ci-build-stats.html">Travis CI
+			Build Statistics</a> which was the starting point for this little
+			project.
+		</p>
 	</div>
 
 	<script src="d3.v4.min.js"></script>
 	<script src="script.js"></script>
 
-	<a href="https://github.com/scribu/travis-stats"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/a6677b08c955af8400f44c6298f40e7d19cc5b2d/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png"></a>
+	<a href="https://github.com/larsxschneider/git-ci-stats"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/a6677b08c955af8400f44c6298f40e7d19cc5b2d/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png"></a>
 </body>
 </html>
