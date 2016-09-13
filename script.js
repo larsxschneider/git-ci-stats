@@ -7,7 +7,15 @@ var config;
 
 d3.round = function(x, n) { var ten_n = Math.pow(10,n); return Math.round(x * ten_n) / ten_n; }
 
-function renderBuildTimes(container, barValue, data, baseUrl) {
+function isActiveBranch(branch) {
+	return (d3.select('input[name="branch"]:checked').property("value") === branch);
+}
+
+function renderBuildTimes(branch, container, barValue, data, baseUrl) {
+	if (!isActiveBranch(branch)) {
+		return;
+	}
+
 	var paddingLeft = 120; // space to the left of the bars
 	var paddingRight = 10; // space to the right of the bars
 	var barHeight = 10; // height of one bar
@@ -174,7 +182,7 @@ function updateChart(branch) {
 			if (build.state !== 'passed') {
 				build.job_ids.forEach(function(job_id) {
 					d3.text(jobsUrl + job_id + '/log.txt', function(rawLog) {
-						if (rawLog !== null && rawLog.length > 0 ) {
+						if (rawLog !== null && rawLog.length > 0) {
 							if (rawLog.indexOf('Done. Your build exited with 0.') > 0) {
 								// NOOP
 							} else if (
@@ -203,7 +211,7 @@ function updateChart(branch) {
 						} else {
 							build.addFailReason('no-log');
 						}
-						renderBuildTimes('#build-times-duration', getDuration, builds, baseUrl);
+						renderBuildTimes(branch, '#build-times-duration', getDuration, builds, baseUrl);
 					})
 				})
 			}
@@ -216,18 +224,21 @@ function updateChart(branch) {
 			return build.duration/60;
 		}
 
-		renderBuildTimes('#build-times-duration', getDuration, builds, baseUrl);
+		renderBuildTimes(branch, '#build-times-duration', getDuration, builds, baseUrl);
 
 		if (++i < n && curOldestBuild < oldestBuild) {
 			oldestBuild = curOldestBuild;
-			retrieveJson(buildsUrl + '&after_number=' + oldestBuild, filterBuilds);
+			retrieveJson(branch, buildsUrl + '&after_number=' + oldestBuild, filterBuilds);
 		}
 	}
 
-	retrieveJson(buildsUrl, filterBuilds);
+	retrieveJson(branch, buildsUrl, filterBuilds);
 }
 
-function retrieveJson(url, callback) {
+function retrieveJson(branch, url, callback) {
+	if (!isActiveBranch(branch)) {
+		return;
+	}
 	var req = d3.json(url);
 	req = req.header("Accept", 'application/vnd.travis-ci.2+json');
 	req.get(callback);
@@ -237,9 +248,9 @@ function getConfigUrl() {
 	return location.pathname.replace('index.html', '') + 'config.json';
 }
 
-
 d3.selectAll('input').on('change', function() {
-	d3.event.preventDefault();updateChart(this.value);
+	d3.event.preventDefault();
+	updateChart(this.value);
 });
 
 config = defaultConfig;
