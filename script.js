@@ -68,7 +68,10 @@ function renderBuildTimes(branch, container, barValue, data, baseUrl) {
 	bar.append("rect")
 		.attr('y', y)
 		.attr('height', yScale(1))
-		.attr('width', function(d) { return x(barValue(d)); })
+		.attr('width', function(d) {
+			v = x(barValue(d));
+			return (v >= 0 ? v : 0);
+		})
 		.attr('stroke', 'white')
 		.attr('class', 'build-time-bar')
 		.attr('fill', function(d) {
@@ -91,7 +94,11 @@ function renderBuildTimes(branch, container, barValue, data, baseUrl) {
 		.attr('font-family', 'monospace')
 		.style('font-size', '10px')
 		.text(function(d) {
-			return d.finished_at.substring(0, 10);
+			if (d.finished_at)
+				return d.finished_at.substring(0, 10);
+			if (d.started_at)
+				return d.started_at.substring(0, 10);
+			return '';
 		});
 
 	bar.append("text")
